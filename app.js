@@ -1,10 +1,9 @@
 var app = require('express.io')();
 app.http().io();
 
-app.io.route('ready', function(req) {
-  req.io.emit('talk', {
-    message: 'io event'
-  });
+app.io.route('capture', function(req) {
+  console.log('capture: ' + req.data.length);
+  app.io.broadcast('image', req.data);
 });
 
 app.get('/', function(req, res) {

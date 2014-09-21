@@ -1,13 +1,58 @@
+
+<video id="v" width="320" height="240" autoplay></video>
+<canvas id="c" width="320" height="240" ></canvas>
+<!-- <canvas id="o" width="320" height="240" ></canvas> -->
+<img id="i" width="320" height="240" alt="image"></img>
+
 <script src="/socket.io/socket.io.js"></script>
 <script>
-io = io.connect()
+var io = io.connect();
 
-// Emit ready event.
-io.emit('ready') 
+var v = document.getElementById('v'),
+    c = document.getElementById('c'),
+    ctx = c.getContext('2d'),
+    // o = document.getElementById('o'),
+    // out = o.getContext('2d'),
+    i = document.getElementById('i');
 
-// Listen for the talk event.
-io.on('talk', function(data) {
-    alert(data.message)
-})  
+io.on('image', function(data) {
+    // var img = new Image();
+    // img.src = data;
+    i.src = data;
+    // img.addEventListener('load', function() {
+    //   out.drawImage(img, 0, 0);
+    // });
+});
+
+navigator.getUserMedia = (navigator.getUserMedia ||
+                          navigator.webkitGetUserMedia ||
+                          navigator.mozGetUserMedia ||
+                          navigator.msGetUserMedia);
+if (navigator.getUserMedia) {
+  navigator.getUserMedia(
+    {
+      video:true,
+      audio:false
+    },
+    function(stream) {
+      var url = window.URL || window.webkitURL;
+      v.src = url ? url.createObjectURL(stream) : stream;
+    },
+    function(error) {
+      alert('Something went wrong. (error code ' + error.code + ')');
+    }
+  );
+}
+else {
+  alert('Sorry, the browser you are using doesn\'t support getUserMedia');
+}
+
+var timer = setInterval(
+  function() {
+    ctx.drawImage(v, 0, 0, 320, 240);
+    var data = c.toDataURL('image/jpeg', 1.0);
+    io.emit('capture', data);
+  }, 50
+);
 
 </script>
