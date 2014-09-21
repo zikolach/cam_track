@@ -1,5 +1,5 @@
 # Camera tracker
 
 ```
-node app.js
+npm install && node app.js
 ```
