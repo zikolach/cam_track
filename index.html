@@ -1,58 +1,76 @@
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+  </head>
+  <body>
+    <video id="v" width="160" height="120" autoplay></video>
+    <canvas id="c" width="160" height="120" ></canvas>
+    <canvas id="o" width="160" height="120" ></canvas>
+    <!-- <img id="i" width="160" height="120" alt="image"></img> -->
 
-<video id="v" width="320" height="240" autoplay></video>
-<canvas id="c" width="320" height="240" ></canvas>
-<!-- <canvas id="o" width="320" height="240" ></canvas> -->
-<img id="i" width="320" height="240" alt="image"></img>
+    <p id="cnt">0</p>
 
-<script src="/socket.io/socket.io.js"></script>
-<script>
-var io = io.connect();
+    <script>
+    $(document).ready(function() {
+      io = io.connect();
 
-var v = document.getElementById('v'),
-    c = document.getElementById('c'),
-    ctx = c.getContext('2d'),
-    // o = document.getElementById('o'),
-    // out = o.getContext('2d'),
-    i = document.getElementById('i');
+      var v = document.getElementById('v'),
+          c = document.getElementById('c'),
+          ctx = c.getContext('2d'),
+          o = document.getElementById('o'),
+          out = o.getContext('2d'),
+          // i = document.getElementById('i'),
+          cnt = $('#cnt');
 
-io.on('image', function(data) {
-    // var img = new Image();
-    // img.src = data;
-    i.src = data;
-    // img.addEventListener('load', function() {
-    //   out.drawImage(img, 0, 0);
-    // });
-});
+      // io.on('image', function(data) {
+      //     var img = new Image();
+      //     // i.src = data;
+      //     img.addEventListener('load', function() {
+      //       out.drawImage(img, 0, 0);
+      //     });
+      //     img.src = data;
+      // });
 
-navigator.getUserMedia = (navigator.getUserMedia ||
-                          navigator.webkitGetUserMedia ||
-                          navigator.mozGetUserMedia ||
-                          navigator.msGetUserMedia);
-if (navigator.getUserMedia) {
-  navigator.getUserMedia(
-    {
-      video:true,
-      audio:false
-    },
-    function(stream) {
-      var url = window.URL || window.webkitURL;
-      v.src = url ? url.createObjectURL(stream) : stream;
-    },
-    function(error) {
-      alert('Something went wrong. (error code ' + error.code + ')');
-    }
-  );
-}
-else {
-  alert('Sorry, the browser you are using doesn\'t support getUserMedia');
-}
+      navigator.getUserMedia = (navigator.getUserMedia ||
+                                navigator.webkitGetUserMedia ||
+                                navigator.mozGetUserMedia ||
+                                navigator.msGetUserMedia);
+      if (navigator.getUserMedia) {
+        navigator.getUserMedia(
+          {
+            video:true,
+            audio:false
+          },
+          function(stream) {
+            var url = window.URL || window.webkitURL;
+            v.src = url ? url.createObjectURL(stream) : stream;
+          },
+          function(error) {
+            alert('Something went wrong. (error code ' + error.code + ')');
+          }
+        );
+      }
+      else {
+        alert('Sorry, the browser you are using doesn\'t support getUserMedia');
+      }
 
-var timer = setInterval(
-  function() {
-    ctx.drawImage(v, 0, 0, 320, 240);
-    var data = c.toDataURL('image/jpeg', 1.0);
-    io.emit('capture', data);
-  }, 50
-);
-
-</script>
+      var timer = setInterval(
+        function() {
+          ctx.drawImage(v, 0, 0, 160, 120);
+          var data = c.toDataURL('image/jpeg', 1.0);
+          io.emit('capture', data, function(data) {
+            cnt.text(parseInt(cnt.text())+1);
+            var img = new Image();
+            // i.src = data;
+            img.addEventListener('load', function() {
+              out.drawImage(img, 0, 0);
+            });
+            img.src = data;
+          });
+        }, 50
+      );
+    });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "cam_track",
+  "version": "0.0.0",
+  "description": "```\r npm install && node app.js\r ```",
+  "main": "app.js",
+  "dependencies": {
+    "express.io": "~1.1.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zikolach/cam_track.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zikolach/cam_track/issues"
+  },
+  "homepage": "https://github.com/zikolach/cam_track"
+}
